@@ -1144,6 +1144,100 @@ function unlockBgmOnce() {
 
 document.addEventListener("click", unlockBgmOnce, { once: true });
 document.addEventListener("touchstart", unlockBgmOnce, { once: true });
+/* 浏览器前进 / 后退适配：Edge、Chrome、Safari 通用 */
+(function enableBrowserHistoryForSwiper() {
+  const HISTORY_PREFIX = "page-";
+  let isHistoryChanging = false;
+  let lastHistoryPage = null;
+
+  function isValidPage(page) {
+    return Number.isInteger(page) && page >= PAGE.HOME && page <= PAGE.RESULT;
+  }
+
+  function getCurrentPage() {
+    if (swiper && typeof swiper.activeIndex === "number") {
+      return swiper.activeIndex;
+    }
+
+    return userState.currentPage || PAGE.HOME;
+  }
+
+  function getPageFromHash() {
+    const match = location.hash.match(/^#page-(\d+)$/);
+
+    if (!match) {
+      return PAGE.HOME;
+    }
+
+    const page = Number(match[1]);
+    return isValidPage(page) ? page : PAGE.HOME;
+  }
+
+  function writeHistory(page, replace = false) {
+    if (!isValidPage(page)) return;
+    if (lastHistoryPage === page && !replace) return;
+
+    const url = new URL(location.href);
+    url.hash = `${HISTORY_PREFIX}${page}`;
+
+    const state = {
+      sanfuPage: page
+    };
+
+    if (replace) {
+      history.replaceState(state, "", url);
+    } else {
+      history.pushState(state, "", url);
+    }
+
+    lastHistoryPage = page;
+  }
+
+  function goToHistoryPage(page) {
+    if (!isValidPage(page)) return;
+    if (!swiper || typeof swiper.slideTo !== "function") return;
+
+    isHistoryChanging = true;
+
+    userState.currentPage = page;
+    swiper.slideTo(page, 420);
+
+    setTimeout(() => {
+      isHistoryChanging = false;
+    }, 460);
+  }
+
+  function initHistory() {
+    if (!swiper || typeof swiper.on !== "function") {
+      setTimeout(initHistory, 80);
+      return;
+    }
+
+    const initialPage = getPageFromHash();
+
+    userState.currentPage = initialPage;
+    swiper.slideTo(initialPage, 0);
+    writeHistory(initialPage, true);
+
+    swiper.on("slideChange", function () {
+      if (isHistoryChanging) return;
+
+      const page = getCurrentPage();
+      userState.currentPage = page;
+      writeHistory(page);
+    });
+
+    window.addEventListener("popstate", function (event) {
+      const pageFromState = event.state && Number.isInteger(event.state.sanfuPage)
+        ? event.state.sanfuPage
+        : getPageFromHash();
+
+      goToHistoryPage(pageFromState);
+    });
+  }
+
+  initHistory();
+})();
 
     // 这些函数暴露到 window，方便调试或对接后续活动平台。
     // Expose functions for debugging and campaign platform integration.
