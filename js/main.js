@@ -1087,6 +1087,63 @@
       initSwiper();
       afterRender();
     }
+  let bgmStartedOnce = false;
+
+function getBgm() {
+  return document.getElementById("bgm");
+}
+
+function updateMusicButtons() {
+  document.querySelectorAll('[data-action="toggleMusic"]').forEach(btn => {
+    btn.innerHTML = `🎵 ${userState.musicOn ? "音乐开" : "音乐关"}`;
+    btn.classList.toggle("music-active", userState.musicOn);
+  });
+}
+
+async function playBgm() {
+  const bgm = getBgm();
+  if (!bgm) return;
+
+  try {
+    bgm.volume = 0.35;
+    await bgm.play();
+    userState.musicOn = true;
+    bgmStartedOnce = true;
+    updateMusicButtons();
+  } catch (error) {
+    console.log("浏览器限制自动播放，需要用户点击后播放音乐。");
+  }
+}
+
+function pauseBgm() {
+  const bgm = getBgm();
+  if (!bgm) return;
+
+  bgm.pause();
+  userState.musicOn = false;
+  updateMusicButtons();
+}
+
+function toggleMusic() {
+  const bgm = getBgm();
+  if (!bgm) return;
+
+  if (bgm.paused) {
+    playBgm();
+  } else {
+    pauseBgm();
+  }
+}
+
+// 用户第一次点击页面时，尝试播放一次音乐
+function unlockBgmOnce() {
+  if (!bgmStartedOnce) {
+    playBgm();
+  }
+}
+
+document.addEventListener("click", unlockBgmOnce, { once: true });
+document.addEventListener("touchstart", unlockBgmOnce, { once: true });
 
     // 这些函数暴露到 window，方便调试或对接后续活动平台。
     // Expose functions for debugging and campaign platform integration.
