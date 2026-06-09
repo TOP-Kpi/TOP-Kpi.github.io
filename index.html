@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>三福生活新搭案</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="css/style.css?v=20260609f">
+</head>
+<body>
+  <div class="phone-stage" aria-label="1080x2400 页面预览舞台">
+    <main class="phone-shell" aria-label="三福生活新搭案手机互动页">
+      <audio id="bgm" loop preload="auto" playsinline>
+        <source src="./music/The Process-Lakey Inspired.mp3" type="audio/mpeg">
+      </audio>
+      <button id="musicBtn" class="music-btn" type="button" data-action="toggleMusic" aria-label="播放或暂停音乐">
+        ♪
+      </button>
+
+      <div class="swiper h5-swiper">
+        <div class="swiper-wrapper">
+          <section class="swiper-slide" id="slide-home"></section>
+          <section class="swiper-slide" id="slide-intro"></section>
+          <section class="swiper-slide" id="slide-scene"></section>
+          <section class="swiper-slide" id="slide-story"></section>
+          <section class="swiper-slide" id="slide-generate-persona"></section>
+          <section class="swiper-slide" id="slide-loading"></section>
+          <section class="swiper-slide" id="slide-result"></section>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Draggable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="js/main.js?v=20260609f"></script>
+</body>
+</html>
