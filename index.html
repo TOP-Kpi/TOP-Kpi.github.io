@@ -36,5 +36,89 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <script src="js/main.js?v=20260609d"></script>
+  <!-- 背景音乐 -->
+  <audio id="bgm" loop preload="auto" playsinline>
+    <source src="./music/The Process-Lakey Inspired.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- 音乐按钮 -->
+  <button id="musicBtn" class="music-btn" aria-label="播放或暂停音乐">
+    ♪
+  </button>
+
+  <style>
+    .music-btn {
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      z-index: 99999;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.88);
+      color: #ff5f9e;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 46px;
+      text-align: center;
+      box-shadow: 0 8px 22px rgba(255, 95, 158, 0.28);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      cursor: pointer;
+    }
+
+    .music-btn.is-playing {
+      color: #fff;
+      background: linear-gradient(135deg, #ff8abf, #ffd1e3);
+      animation: musicRotate 3s linear infinite;
+    }
+
+    @keyframes musicRotate {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+
+  <script>
+    const bgm = document.getElementById('bgm');
+    const musicBtn = document.getElementById('musicBtn');
+
+    bgm.volume = 0.35;
+
+    async function playMusic() {
+      try {
+        await bgm.play();
+        musicBtn.classList.add('is-playing');
+      } catch (error) {
+        console.log('浏览器限制自动播放，需要用户点击后播放音乐。');
+      }
+    }
+
+    function pauseMusic() {
+      bgm.pause();
+      musicBtn.classList.remove('is-playing');
+    }
+
+    musicBtn.addEventListener('click', function (event) {
+      event.stopPropagation();
+
+      if (bgm.paused) {
+        playMusic();
+      } else {
+        pauseMusic();
+      }
+    });
+
+    // 用户第一次点击/触摸页面时，尝试自动播放音乐
+    document.addEventListener('click', playMusic, { once: true });
+    document.addEventListener('touchstart', playMusic, { once: true });
+  </script>
+</body>
+</html>
 </body>
 </html>
