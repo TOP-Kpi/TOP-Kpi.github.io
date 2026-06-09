@@ -594,6 +594,7 @@
         swiper.slideTo(userState.currentPage, 0, false);
       }
       afterRender();
+      updateMusicButtons();
     }
 
     function goTo(pageIndex) {
@@ -930,10 +931,8 @@
 
       switch (target.dataset.action) {
         case "toggleMusic":
-          userState.musicOn = !userState.musicOn;
-          saveState();
-          showToast(userState.musicOn ? "音乐已开启" : "音乐已关闭");
-          refreshCurrent();
+          event.stopPropagation();
+          toggleMusic();
           break;
         case "share":
           showToast("分享功能已模拟");
@@ -1086,6 +1085,7 @@
       renderAll();
       initSwiper();
       afterRender();
+      updateMusicButtons();
     }
   let bgmStartedOnce = false;
 
@@ -1093,11 +1093,27 @@ function getBgm() {
   return document.getElementById("bgm");
 }
 
+function getFloatingMusicBtn() {
+  return document.getElementById("musicBtn");
+}
+
 function updateMusicButtons() {
+  const bgm = getBgm();
+  const isActuallyPlaying = Boolean(bgm && !bgm.paused);
+
   document.querySelectorAll('[data-action="toggleMusic"]').forEach(btn => {
-    btn.innerHTML = `🎵 ${userState.musicOn ? "音乐开" : "音乐关"}`;
-    btn.classList.toggle("music-active", userState.musicOn);
+    if (btn.id === "musicBtn") return;
+
+    btn.innerHTML = `🎵 ${isActuallyPlaying ? "音乐开" : "音乐关"}`;
+    btn.classList.toggle("music-active", isActuallyPlaying);
   });
+
+  const floatingBtn = getFloatingMusicBtn();
+  if (floatingBtn) {
+    floatingBtn.classList.toggle("is-playing", isActuallyPlaying);
+    floatingBtn.textContent = isActuallyPlaying ? "♫" : "♪";
+    floatingBtn.setAttribute("aria-label", isActuallyPlaying ? "暂停音乐" : "播放音乐");
+  }
 }
 
 async function playBgm() {
@@ -1107,10 +1123,14 @@ async function playBgm() {
   try {
     bgm.volume = 0.35;
     await bgm.play();
+
     userState.musicOn = true;
     bgmStartedOnce = true;
+    saveState();
     updateMusicButtons();
+    showToast("音乐已开启");
   } catch (error) {
+    updateMusicButtons();
     console.log("浏览器限制自动播放，需要用户点击后播放音乐。");
   }
 }
@@ -1120,8 +1140,11 @@ function pauseBgm() {
   if (!bgm) return;
 
   bgm.pause();
+
   userState.musicOn = false;
+  saveState();
   updateMusicButtons();
+  showToast("音乐已关闭");
 }
 
 function toggleMusic() {
@@ -1135,9 +1158,8 @@ function toggleMusic() {
   }
 }
 
-// 用户第一次点击页面时，尝试播放一次音乐
 function unlockBgmOnce() {
-  if (!bgmStartedOnce) {
+  if (!bgmStartedOnce && userState.musicOn) {
     playBgm();
   }
 }
