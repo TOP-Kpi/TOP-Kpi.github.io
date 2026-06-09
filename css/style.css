@@ -32,11 +32,8 @@
       min-height: 100%;
       margin: 0;
       color: var(--ink);
-      background:
-        radial-gradient(circle at 8% 18%, rgba(255, 190, 210, .38), transparent 24%),
-        radial-gradient(circle at 92% 28%, rgba(128, 224, 207, .38), transparent 26%),
-        radial-gradient(circle at 18% 84%, rgba(184, 166, 238, .30), transparent 24%),
-        linear-gradient(180deg, #fffaf2 0%, #fff7ef 48%, #fff3f8 100%);
+      background: #ffffff !important;
+      background-image: none !important;
       font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       overflow: hidden;
     }
@@ -68,7 +65,8 @@
         radial-gradient(circle at 96% 50%, rgba(123, 226, 208, .35), transparent 24%),
         radial-gradient(circle at 12% 73%, rgba(255, 204, 218, .35), transparent 18%),
         linear-gradient(180deg, var(--cream) 0%, #fff9f0 58%, #fff6f8 100%);
-      box-shadow: 0 22px 70px rgba(128, 91, 132, .18);
+      box-shadow: none !important;
+      filter: none !important;
       isolation: isolate;
       transform: scale(var(--stage-scale));
       transform-origin: top left;
@@ -78,12 +76,15 @@
       position: relative;
       width: calc(var(--phone-width) * var(--stage-scale));
       height: calc(var(--phone-height) * var(--stage-scale));
-      overflow: visible;
+      overflow: hidden !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      filter: none !important;
     }
 
     @media (min-width: 481px) and (min-height: 760px) {
       .phone-shell {
-        border-radius: 30px;
+        border-radius: 0 !important;
       }
     }
 
@@ -2080,40 +2081,99 @@
         transform-origin: bottom center;
       }
     }
-/* 背景音乐按钮 */
+/* ===== 最终覆盖：去掉手机页面外部模糊背景 ===== */
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: #ffffff !important;
+  background-image: none !important;
+  overflow: hidden;
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
+.phone-stage {
+  position: relative;
+  width: calc(var(--phone-width) * var(--stage-scale));
+  height: calc(var(--phone-height) * var(--stage-scale));
+  overflow: hidden !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.phone-stage::before,
+.phone-stage::after,
+body::before,
+body::after {
+  content: none !important;
+  display: none !important;
+}
+
+.phone-shell {
+  position: relative;
+  width: var(--phone-width);
+  height: var(--phone-height);
+  min-height: 0;
+  overflow: hidden;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (min-width: 481px) and (min-height: 760px) {
+  .phone-shell {
+    border-radius: 0 !important;
+  }
+}
+
+/* ===== 音乐按钮：固定在手机页面内部右上角 ===== */
+
 .music-btn {
-  position: fixed;
-  right: 18px;
-  top: 18px;
+  position: absolute !important;
+  right: 14px !important;
+  top: 18px !important;
   z-index: 99999;
+
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  border: 4px solid rgba(255, 255, 255, 0.88);
-  background:
-    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.8), transparent 32%),
-    linear-gradient(180deg, #fff8ed 0%, #ffe6f0 100%);
+  border: 2px solid #111;
+
+  background: rgba(255, 255, 255, 0.94) !important;
   color: var(--pink-deep);
   font-size: 24px;
   font-weight: 900;
   line-height: 1;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow:
-    0 8px 20px rgba(240, 82, 131, 0.22),
-    0 0 0 2px rgba(255, 190, 210, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   cursor: pointer;
 }
 
 .music-btn.is-playing {
   color: #fff;
-  background:
-    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.62), transparent 32%),
-    linear-gradient(180deg, #ff9fba 0%, #ff6f9a 48%, #f05283 100%);
+  background: linear-gradient(180deg, #ff9fba 0%, #ff6f9a 48%, #f05283 100%) !important;
   animation: musicRotate 3s linear infinite;
+}
+
+.music-btn:active {
+  transform: scale(0.96);
 }
 
 @keyframes musicRotate {
@@ -2125,56 +2185,3 @@
     transform: rotate(360deg);
   }
 }
-
-.music-btn:active {
-  transform: scale(0.96);
-}
-/* 背景音乐按钮 */
-.music-btn {
-  position: fixed;
-  right: 18px;
-  top: 18px;
-  z-index: 99999;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  border: 4px solid rgba(255, 255, 255, 0.88);
-  background:
-    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.8), transparent 32%),
-    linear-gradient(180deg, #fff8ed 0%, #ffe6f0 100%);
-  color: var(--pink-deep);
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow:
-    0 8px 20px rgba(240, 82, 131, 0.22),
-    0 0 0 2px rgba(255, 190, 210, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  cursor: pointer;
-}
-
-.music-btn.is-playing {
-  color: #fff;
-  background:
-    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.62), transparent 32%),
-    linear-gradient(180deg, #ff9fba 0%, #ff6f9a 48%, #f05283 100%);
-  animation: musicRotate 3s linear infinite;
-}
-
-@keyframes musicRotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.music-btn:active {
-  transform: scale(0.96);
-}  
